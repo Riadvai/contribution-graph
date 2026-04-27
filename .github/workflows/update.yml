@@ -2,7 +2,7 @@ name: Update Contribution Graph
 
 on:
   schedule:
-    - cron: "0 0 * * *"  # প্রতিদিন run হবে
+    - cron: "0 0 * * *"
   workflow_dispatch:
 
 jobs:
@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Install Python
-        uses: actions/setup-python@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.10
+          python-version: '3.11'
 
       - name: Install dependencies
         run: pip install matplotlib requests pillow
