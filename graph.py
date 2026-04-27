@@ -5,7 +5,7 @@ from matplotlib.animation import FuncAnimation
 
 USERNAME = "riadvai"
 
-url = f"https://github-contributions-api.jogruber.de/v4/{USERNAME}"
+url = f"https://github-contributions-api.jogruber.de/v4/{riadvai}"
 data = requests.get(url).json()
 
 days = []
