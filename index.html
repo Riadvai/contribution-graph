@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Contribution Graph</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background: #0d1117;
+      color: cyan;
+      text-align: center;
+    }
+    canvas {
+      max-width: 900px;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Contribution Graph</h2>
+<canvas id="chart"></canvas>
+
+<script>
+const ctx = document.getElementById('chart');
+
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: Array.from({length: 30}, (_, i) => i+1),
+    datasets: [{
+      label: 'Contributions',
+      data: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,12],
+      borderColor: '#00f7ff',
+      backgroundColor: '#00f7ff',
+      tension: 0.4,
+      pointRadius: 4
+    }]
+  },
+  options: {
+    animation: true,
+    scales: {
+      x: {
+        ticks: { color: '#00f7ff' },
+        grid: { color: '#1f2a38' }
+      },
+      y: {
+        ticks: { color: '#00f7ff' },
+        grid: { color: '#1f2a38' }
+      }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
