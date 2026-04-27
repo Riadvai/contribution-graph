@@ -11,45 +11,69 @@
       font-family: Arial;
     }
     canvas {
-      max-width: 900px;
+      max-width: 1000px;
       margin-top: 40px;
     }
   </style>
 </head>
 <body>
 
-<h2>My Contribution Graph</h2>
+<h2>My Real Contribution Graph</h2>
 <canvas id="chart"></canvas>
 
 <script>
-const ctx = document.getElementById('chart');
+async function loadData() {
+  const res = await fetch("https://github-contributions-api.jogruber.de/v4/riadvai");
+  const data = await res.json();
 
-new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels: Array.from({length: 30}, (_, i) => i+1),
-    datasets: [{
-      label: 'Contributions',
-      data: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,12],
-      borderColor: '#00f7ff',
-      backgroundColor: '#00f7ff',
-      tension: 0.4,
-      pointRadius: 4
-    }]
-  },
-  options: {
-    animation: true,
-    scales: {
-      x: {
-        ticks: { color: '#00f7ff' },
-        grid: { color: '#1f2a38' }
+  let counts = [];
+
+  data.contributions.forEach(week => {
+    week.days.forEach(day => {
+      counts.push(day.count);
+    });
+  });
+
+  return counts.slice(-30); // last 30 days
+}
+
+loadData().then(values => {
+  const ctx = document.getElementById('chart');
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: Array.from({length: values.length}, (_, i) => i+1),
+      datasets: [{
+        label: 'Contributions',
+        data: values,
+        borderColor: '#00f7ff',
+        backgroundColor: 'rgba(0,247,255,0.2)',
+        tension: 0.4,
+        pointRadius: 4
+      }]
+    },
+    options: {
+      animation: {
+        duration: 2000
       },
-      y: {
-        ticks: { color: '#00f7ff' },
-        grid: { color: '#1f2a38' }
+      plugins: {
+        legend: {
+          labels: { color: '#00f7ff' }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#00f7ff' },
+          grid: { color: '#1f2a38' }
+        },
+        y: {
+          ticks: { color: '#00f7ff' },
+          grid: { color: '#1f2a38' }
+        }
       }
     }
-  }
+  });
 });
 </script>
 
