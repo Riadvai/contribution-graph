@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Contribution Graph</title>
+  <title>Ultra Contribution Graph</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       background: #0d1117;
       color: #00f7ff;
       text-align: center;
-      font-family: Arial;
+      font-family: 'Segoe UI', sans-serif;
     }
+
+    h2 {
+      margin-top: 20px;
+      text-shadow: 0 0 10px #00f7ff;
+    }
+
     canvas {
       max-width: 1000px;
       margin-top: 40px;
@@ -18,7 +24,7 @@
 </head>
 <body>
 
-<h2>My Real Contribution Graph</h2>
+<h2>🚀 Ultra Contribution Graph</h2>
 <canvas id="chart"></canvas>
 
 <script>
@@ -26,54 +32,84 @@ async function loadData() {
   const res = await fetch("https://github-contributions-api.jogruber.de/v4/riadvai");
   const data = await res.json();
 
+  let dates = [];
   let counts = [];
 
   data.contributions.forEach(week => {
     week.days.forEach(day => {
+      dates.push(day.date.slice(5)); // MM-DD
       counts.push(day.count);
     });
   });
 
-  return counts.slice(-30); // last 30 days
+  return {
+    labels: dates.slice(-30),
+    values: counts.slice(-30)
+  };
 }
 
-loadData().then(values => {
-  const ctx = document.getElementById('chart');
+loadData().then(({labels, values}) => {
+
+  const ctx = document.getElementById('chart').getContext('2d');
+
+  // Glow effect
+  const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+  gradient.addColorStop(0, "#00f7ff");
+  gradient.addColorStop(1, "rgba(0,247,255,0)");
 
   new Chart(ctx, {
     type: 'line',
     data: {
-      labels: Array.from({length: values.length}, (_, i) => i+1),
+      labels: labels,
       datasets: [{
-        label: 'Contributions',
+        label: 'Daily Contributions',
         data: values,
         borderColor: '#00f7ff',
-        backgroundColor: 'rgba(0,247,255,0.2)',
+        backgroundColor: gradient,
+        borderWidth: 3,
         tension: 0.4,
-        pointRadius: 4
+        pointRadius: 4,
+        pointHoverRadius: 7,
+        pointBackgroundColor: '#ffffff',
+        pointBorderColor: '#00f7ff'
       }]
     },
     options: {
+      responsive: true,
       animation: {
-        duration: 2000
+        duration: 2000,
+        easing: 'easeInOutQuart'
       },
       plugins: {
         legend: {
           labels: { color: '#00f7ff' }
+        },
+        tooltip: {
+          backgroundColor: '#0d1117',
+          borderColor: '#00f7ff',
+          borderWidth: 1,
+          titleColor: '#00f7ff',
+          bodyColor: '#ffffff',
+          callbacks: {
+            label: function(context) {
+              return ` ${context.raw} contributions`;
+            }
+          }
         }
       },
       scales: {
         x: {
           ticks: { color: '#00f7ff' },
-          grid: { color: '#1f2a38' }
+          grid: { color: 'rgba(0,247,255,0.1)' }
         },
         y: {
           ticks: { color: '#00f7ff' },
-          grid: { color: '#1f2a38' }
+          grid: { color: 'rgba(0,247,255,0.1)' }
         }
       }
     }
   });
+
 });
 </script>
 
