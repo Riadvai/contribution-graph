@@ -29,23 +29,32 @@
 
 <script>
 async function loadData() {
-  const res = await fetch("https://github-contributions-api.jogruber.de/v4/riadvai");
-  const data = await res.json();
+  try {
+    const res = await fetch("https://github-contributions-api.jogruber.de/v4/riadvai");
+    const data = await res.json();
 
-  let dates = [];
-  let counts = [];
+    let dates = [];
+    let counts = [];
 
-  data.contributions.forEach(week => {
-    week.days.forEach(day => {
-      dates.push(day.date.slice(5)); // MM-DD
-      counts.push(day.count);
+    data.contributions.forEach(week => {
+      week.days.forEach(day => {
+        dates.push(day.date.slice(5));
+        counts.push(day.count);
+      });
     });
-  });
 
-  return {
-    labels: dates.slice(-30),
-    values: counts.slice(-30)
-  };
+    return {
+      labels: dates.slice(-30),
+      values: counts.slice(-30)
+    };
+
+  } catch (e) {
+    // fallback (jodi API fail kore)
+    return {
+      labels: Array.from({length: 30}, (_, i) => i+1),
+      values: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,12]
+    };
+  }
 }
 
 loadData().then(({labels, values}) => {
