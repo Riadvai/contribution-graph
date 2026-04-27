@@ -5,18 +5,21 @@ from matplotlib.animation import FuncAnimation
 
 USERNAME = "riadvai"
 
-url = f"https://github-contributions-api.jogruber.de/v4/{riadvai}"
-data = requests.get(url).json()
+try:
+    url = f"https://github-contributions-api.jogruber.de/v4/{USERNAME}"
+    response = requests.get(url, timeout=10)
+    data = response.json()
 
-days = []
-counts = []
+    counts = []
+    for week in data["contributions"]:
+        for day in week["days"]:
+            counts.append(day["count"])
 
-for week in data["contributions"]:
-    for day in week["days"]:
-        days.append(day["date"][-2:])
-        counts.append(day["count"])
+except:
+    # যদি API fail করে → fallback data
+    counts = [0]*25 + [2, 0, 47]
 
-x = np.arange(len(days))
+x = np.arange(len(counts))
 y = counts
 
 fig, ax = plt.subplots(figsize=(10,4))
